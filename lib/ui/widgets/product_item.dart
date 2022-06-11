@@ -29,27 +29,32 @@ class _ProductItemState extends State<ProductItem> {
 
   @override
   Widget build(BuildContext context) {
-    return GridTile(
-      child: Image.network(
-        widget._product.imageUrl,
-        fit: BoxFit.cover,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: GridTile(
+        child: Image.network(
+          widget._product.imageUrl,
+          fit: BoxFit.cover,
+        ),
+        footer: GridTileBar(
+            backgroundColor: Colors.black54,
+            leading: IconButton(
+              icon: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border),
+              onPressed: _toggleFavorite,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            title: Text(
+              widget._product.title,
+              textAlign: TextAlign.center,
+            ),
+            trailing: IconButton(
+              icon: Icon(_isInCart
+                  ? Icons.remove_shopping_cart
+                  : Icons.add_shopping_cart),
+              onPressed: _toggleInCart,
+              color: Theme.of(context).colorScheme.secondary,
+            )),
       ),
-      footer: GridTileBar(
-          backgroundColor: Colors.black38,
-          leading: IconButton(
-            icon: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border),
-            onPressed: _toggleFavorite,
-          ),
-          title: Text(
-            widget._product.title,
-            textAlign: TextAlign.center,
-          ),
-          trailing: IconButton(
-            icon: Icon(_isInCart
-                ? Icons.remove_shopping_cart
-                : Icons.add_shopping_cart),
-            onPressed: _toggleInCart,
-          )),
     );
   }
 }

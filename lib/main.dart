@@ -9,10 +9,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'MyShop',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+          colorScheme: ColorScheme.fromSwatch(
+              primarySwatch: Colors.deepOrange,
+          ),
+          fontFamily: 'Lato'
       ),
       routes: {
-        '/' : (ctx) => ProductsOverviewScreen(),
+        '/': (ctx) => ProductsOverviewScreen(),
       },
     );
   }
