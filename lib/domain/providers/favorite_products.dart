@@ -8,11 +8,13 @@ class FavoriteProducts with ChangeNotifier {
   }
 
   bool toggleFavorite(String productId) {
-    if (checkIfProductIsFavoriteById(productId)) {
+    var isFavoriteById = checkIfProductIsFavoriteById(productId);
+    if (isFavoriteById) {
       removeProductWithIdFromFavorites(productId);
     } else {
       addProductWithIdToFavorites(productId);
     }
+    return !isFavoriteById;
   }
 
   void addProductWithIdToFavorites(String productId) {
