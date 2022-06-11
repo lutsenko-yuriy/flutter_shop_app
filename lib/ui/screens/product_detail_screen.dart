@@ -4,6 +4,8 @@ import 'package:flutter_complete_guide/domain/providers/favorite_products.dart';
 import 'package:flutter_complete_guide/domain/providers/shopping_cart.dart';
 import 'package:provider/provider.dart';
 
+import '../../domain/models/product.dart';
+
 class ProductDetailScreen extends StatelessWidget {
   static const routeName = '/product-detail';
   static const productIdArgument = 'productId';
@@ -14,8 +16,8 @@ class ProductDetailScreen extends StatelessWidget {
     context.read<FavoriteProducts>().toggleFavorite(productId);
   }
 
-  void _toggleInCart(BuildContext context, String productId) {
-    context.read<ShoppingCart>().toggleInCart(productId);
+  void _addToCart(BuildContext context, Product product) {
+    context.read<ShoppingCart>().addToCart(product);
   }
 
   @override
@@ -51,7 +53,7 @@ class ProductDetailScreen extends StatelessWidget {
                   inCart ? Icons.shopping_cart : Icons.add_shopping_cart,
                   color: inCart ? Colors.amber : Colors.grey,
                 ),
-                onPressed: () => _toggleInCart(context, productId),
+                onPressed: () => _addToCart(context, product),
               )
             ],
           )

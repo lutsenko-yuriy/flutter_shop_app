@@ -15,8 +15,8 @@ class ProductItem extends StatelessWidget {
     context.read<FavoriteProducts>().toggleFavorite(_product.id);
   }
 
-  void _toggleInCart(BuildContext context) {
-    context.read<ShoppingCart>().toggleInCart(_product.id);
+  void _addToCart(BuildContext context) {
+    context.read<ShoppingCart>().addToCart(_product);
   }
 
   void _goToDetails(BuildContext context) {
@@ -57,7 +57,7 @@ class ProductItem extends StatelessWidget {
               icon: Icon(inCart
                   ? Icons.shopping_cart
                   : Icons.add_shopping_cart),
-              onPressed: () => _toggleInCart(context),
+              onPressed: () => _addToCart(context),
               color: Theme.of(context).colorScheme.secondary,
             )),
       ),

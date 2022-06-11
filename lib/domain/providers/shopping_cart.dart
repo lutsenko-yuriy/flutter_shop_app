@@ -1,34 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_complete_guide/domain/models/cart_position.dart';
+
+import '../models/product.dart';
 
 class ShoppingCart with ChangeNotifier {
-  Map<String, int> _productsIdsInCart = {};
+  Map<String, CartPosition> _productsInCart = {};
 
   bool checkIfProductIsInCartById(String productId) {
-    return _productsIdsInCart.containsKey(productId) && _productsIdsInCart[productId] > 0;
+    return _productsInCart.containsKey(productId);
   }
 
-  bool toggleInCart(String productId) {
-    var isInCart = checkIfProductIsInCartById(productId);
-    if (isInCart) {
-      removeProductWithIdFromCart(productId);
+  void addToCart(Product product, {int count = 1}) {
+    if (checkIfProductIsInCartById(product.id)) {
+      _productsInCart.update(product.id, (currentPosition) {
+        var newCount = currentPosition.count + count;
+        return CartPosition(
+              id: currentPosition.id,
+              productId: currentPosition.productId,
+              title: currentPosition.title,
+              count: newCount,
+              price: newCount * product.price
+          );
+      });
     } else {
-      addProductWithIdToCart(productId);
+      _productsInCart.putIfAbsent(product.id, () =>
+          CartPosition(
+              id: DateTime.now().toString(),
+              productId: product.id,
+              title: product.title,
+              count: count,
+              price: count * product.price
+          ));
     }
-    return !isInCart;
-  }
-
-  void addProductWithIdToCart(String productId) {
-    _productsIdsInCart[productId] = 1;
-    notifyListeners();
-  }
-
-  void setCountForProductWithId(String productId, int count) {
-    _productsIdsInCart[productId] = count;
     notifyListeners();
   }
 
   void removeProductWithIdFromCart(String productId) {
-    _productsIdsInCart.remove(productId);
+    _productsInCart.remove(productId);
     notifyListeners();
   }
 }
