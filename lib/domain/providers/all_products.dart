@@ -42,4 +42,8 @@ class AllProducts with ChangeNotifier {
      return [..._items];
    }
 
+   Product productById(String productId) {
+     return _items.firstWhere((product) => product.id == productId);
+   }
+
 }

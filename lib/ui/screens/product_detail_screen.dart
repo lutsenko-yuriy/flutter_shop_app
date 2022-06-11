@@ -16,8 +16,7 @@ class ProductDetailScreen extends StatelessWidget {
 
     final product = context
         .watch<AllProducts>()
-        .items
-        .firstWhere((element) => element.id == productId);
+        .productById(productId);
     final favorite = context
         .watch<FavoriteProducts>()
         .checkIfProductIsFavoriteById(productId);
