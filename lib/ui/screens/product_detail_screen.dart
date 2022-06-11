@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/domain/providers/all_products.dart';
 import 'package:flutter_complete_guide/domain/providers/favorite_products.dart';
+import 'package:flutter_complete_guide/domain/providers/shopping_cart.dart';
 import 'package:provider/provider.dart';
 
 class ProductDetailScreen extends StatelessWidget {
@@ -13,6 +14,10 @@ class ProductDetailScreen extends StatelessWidget {
     context.read<FavoriteProducts>().toggleFavorite(productId);
   }
 
+  void _toggleInCart(BuildContext context, String productId) {
+    context.read<ShoppingCart>().toggleInCart(productId);
+  }
+
   @override
   Widget build(BuildContext context) {
     var productId = (ModalRoute.of(context).settings.arguments
@@ -22,18 +27,35 @@ class ProductDetailScreen extends StatelessWidget {
     final favorite = context
         .watch<FavoriteProducts>()
         .checkIfProductIsFavoriteById(productId);
+    final inCart = context
+        .watch<ShoppingCart>()
+        .checkIfProductIsInCartById(productId);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(product.title),
       ),
       body: Center(
-          child: IconButton(
-        icon: Icon(
-          favorite ? Icons.favorite : Icons.favorite_border,
-          color: favorite ? Colors.red : Colors.grey,
-        ),
-            onPressed: () => _toggleFavorite(context, productId),
-      )),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              IconButton(
+                icon: Icon(
+                  favorite ? Icons.favorite : Icons.favorite_border,
+                  color: favorite ? Colors.red : Colors.grey,
+                ),
+                onPressed: () => _toggleFavorite(context, productId),
+              ),
+              IconButton(
+                icon: Icon(
+                  inCart ? Icons.shopping_cart : Icons.add_shopping_cart,
+                  color: inCart ? Colors.amber : Colors.grey,
+                ),
+                onPressed: () => _toggleInCart(context, productId),
+              )
+            ],
+          )
+      ),
     );
   }
 }

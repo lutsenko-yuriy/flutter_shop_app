@@ -1,3 +1,3 @@
 enum FilterOptions {
-  favorites, all,
+  shoppingCart, favorites, all,
 }
