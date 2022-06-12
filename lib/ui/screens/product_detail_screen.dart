@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/domain/providers/all_products.dart';
 import 'package:flutter_complete_guide/domain/providers/favorite_products.dart';
 import 'package:flutter_complete_guide/domain/providers/shopping_cart.dart';
+import 'package:flutter_complete_guide/ui/widgets/badge.dart';
 import 'package:provider/provider.dart';
 
 import '../../domain/models/product.dart';
@@ -17,7 +18,7 @@ class ProductDetailScreen extends StatelessWidget {
   }
 
   void _addToCart(BuildContext context, Product product) {
-    context.read<ShoppingCart>().addToCart(product);
+    context.read<ShoppingCart>().addProduct(product);
   }
 
   @override
@@ -29,9 +30,9 @@ class ProductDetailScreen extends StatelessWidget {
     final favorite = context
         .watch<FavoriteProducts>()
         .checkIfProductIsFavoriteById(productId);
-    final inCart = context
+    final countInCart = context
         .watch<ShoppingCart>()
-        .checkIfProductIsInCartById(productId);
+        .getProductCountById(productId);
 
     return Scaffold(
       appBar: AppBar(
@@ -49,9 +50,12 @@ class ProductDetailScreen extends StatelessWidget {
                 onPressed: () => _toggleFavorite(context, productId),
               ),
               IconButton(
-                icon: Icon(
-                  inCart ? Icons.shopping_cart : Icons.add_shopping_cart,
-                  color: inCart ? Colors.amber : Colors.grey,
+                icon: Badge(
+                  child: Icon(
+                    countInCart > 0 ? Icons.shopping_cart : Icons.add_shopping_cart,
+                    color: countInCart > 0 ? Colors.amber : Colors.grey,
+                  ),
+                  value: countInCart.toString(),
                 ),
                 onPressed: () => _addToCart(context, product),
               )

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/domain/providers/favorite_products.dart';
 import 'package:flutter_complete_guide/domain/providers/shopping_cart.dart';
+import 'package:flutter_complete_guide/ui/widgets/badge.dart';
 import 'package:provider/provider.dart';
 
 import '../../domain/models/filter_options.dart';
@@ -22,22 +23,17 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final loadedProducts = context.watch<AllProducts>().items;
+    final loadedProducts = context
+        .watch<AllProducts>()
+        .items;
     final favoriteProducts = context.watch<FavoriteProducts>();
-    final shoppingCart = context.watch<ShoppingCart>();
 
     List<Product> productsToDisplay;
     switch (selectedFilterOption) {
-      case FilterOptions.shoppingCart:
-        productsToDisplay = loadedProducts
-            .where((product) =>
-                shoppingCart.checkIfProductIsInCartById(product.id))
-            .toList();
-        break;
       case FilterOptions.favorites:
         productsToDisplay = loadedProducts
             .where((product) =>
-                favoriteProducts.checkIfProductIsFavoriteById(product.id))
+            favoriteProducts.checkIfProductIsFavoriteById(product.id))
             .toList();
         break;
       case FilterOptions.all:
@@ -48,8 +44,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
     final Widget widgetToDisplay = productsToDisplay.isNotEmpty
         ? ProductsGrid(productsToDisplay)
         : Center(
-            child: Text('The list is empty'),
-          );
+      child: Text('The list is empty'),
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -62,15 +58,24 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                 selectedFilterOption = selectedValue;
               });
             },
-            itemBuilder: (_) => [
+            itemBuilder: (_) =>
+            [
               PopupMenuItem(
                   child: Text('Only Favorites'),
                   value: FilterOptions.favorites),
-              PopupMenuItem(
-                  child: Text('Only in the cart'),
-                  value: FilterOptions.shoppingCart),
               PopupMenuItem(child: Text('Show all'), value: FilterOptions.all),
             ],
+          ),
+          Consumer<ShoppingCart>(
+              builder: (_, value, child) {
+                return Badge(
+                    child: child,
+                    value: value.productsCount.toString());
+              },
+              child: IconButton(
+                icon: Icon(Icons.shopping_cart),
+                onPressed: () {},
+              )
           )
         ],
       ),

@@ -16,7 +16,7 @@ class ProductItem extends StatelessWidget {
   }
 
   void _addToCart(BuildContext context) {
-    context.read<ShoppingCart>().addToCart(_product);
+    context.read<ShoppingCart>().addProduct(_product);
   }
 
   void _goToDetails(BuildContext context) {
