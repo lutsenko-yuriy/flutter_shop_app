@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_complete_guide/domain/models/cart_position.dart';
-import 'package:flutter_complete_guide/domain/models/order.dart';
-import 'package:flutter_complete_guide/domain/providers/shopping_cart.dart';
-import 'package:flutter_complete_guide/ui/screens/orders_screen.dart';
-import 'package:flutter_complete_guide/ui/widgets/cart_item.dart';
 import 'package:provider/provider.dart';
 
+import '../../domain/models/cart_position.dart';
+import '../../domain/models/order.dart';
 import '../../domain/providers/orders.dart';
+import '../../domain/providers/shopping_cart.dart';
+import '../widgets/cart_item.dart';
 
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart';
@@ -19,10 +18,12 @@ class CartScreen extends StatelessWidget {
 
   void _submitOrder(BuildContext context, List<CartPosition> positions) {
     if (positions.isNotEmpty) {
-      context.read<Orders>().addOrder(Order.rightNowWithDefaultPrice(positions));
+      context
+          .read<Orders>()
+          .addOrder(Order.rightNowWithDefaultPrice(positions));
       context.read<ShoppingCart>().clearCart();
 
-      Navigator.of(context).pushNamed(OrdersScreen.routeName);
+      Navigator.of(context).pop();
     }
   }
 
@@ -80,8 +81,8 @@ class CartScreen extends StatelessWidget {
                     itemCount: cart.positionsCount,
                     itemBuilder: (context, index) {
                       return CartItem(
-                          positions[index],
-                          (position) => _removePosition(context, position),
+                        positions[index],
+                        (position) => _removePosition(context, position),
                       );
                     }))
           ],

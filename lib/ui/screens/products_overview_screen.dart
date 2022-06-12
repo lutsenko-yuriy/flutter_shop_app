@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_complete_guide/domain/providers/favorite_products.dart';
-import 'package:flutter_complete_guide/domain/providers/shopping_cart.dart';
-import 'package:flutter_complete_guide/ui/screens/cart_screen.dart';
-import 'package:flutter_complete_guide/ui/widgets/badge.dart';
 import 'package:provider/provider.dart';
 
 import '../../domain/models/filter_options.dart';
 import '../../domain/models/product.dart';
 import '../../domain/providers/all_products.dart';
+import '../../domain/providers/favorite_products.dart';
+import '../../domain/providers/shopping_cart.dart';
+import '../widgets/badge.dart';
 import '../widgets/products_grid.dart';
+import 'cart_screen.dart';
+import 'orders_drawer.dart';
 
 class ProductsOverviewScreen extends StatefulWidget {
   static const routeName = '/products';
@@ -49,6 +50,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
     );
 
     return Scaffold(
+      drawer: OrdersDrawer(),
       appBar: AppBar(
         title: Text('MyShop'),
         actions: [
