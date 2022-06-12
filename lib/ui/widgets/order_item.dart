@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_complete_guide/ui/screens/product_detail_screen.dart';
 import 'package:intl/intl.dart';
 
 import '../../domain/models/order.dart';
+import '../../domain/models/product.dart';
 
 class OrderItem extends StatefulWidget {
   final Order _order;
@@ -19,6 +21,11 @@ class _OrderItemState extends State<OrderItem> {
     setState(() {
       _expanded = !_expanded;
     });
+  }
+
+  void _openProductDetails(BuildContext context, Product product) {
+    Navigator.of(context).pushNamed(ProductDetailScreen.routeName,
+        arguments: {ProductDetailScreen.productIdArgument: product.id});
   }
 
   @override
@@ -44,13 +51,17 @@ class _OrderItemState extends State<OrderItem> {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: widget._order.positions.map((position) {
-                    return Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Image.network(
-                        position.product.imageUrl,
-                        fit: BoxFit.cover,
-                        height: 100,
-                        width: 100,
+                    return GestureDetector(
+                      onTap: () =>
+                          _openProductDetails(context, position.product),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Image.network(
+                          position.product.imageUrl,
+                          fit: BoxFit.cover,
+                          height: 100,
+                          width: 100,
+                        ),
                       ),
                     );
                   }).toList(),
