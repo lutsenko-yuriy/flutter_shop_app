@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/domain/providers/all_products.dart';
 import 'package:flutter_complete_guide/domain/providers/favorite_products.dart';
 import 'package:flutter_complete_guide/domain/providers/shopping_cart.dart';
-import 'package:flutter_complete_guide/ui/widgets/badge.dart';
 import 'package:provider/provider.dart';
 
 import '../../domain/models/product.dart';
@@ -30,16 +29,40 @@ class ProductDetailScreen extends StatelessWidget {
     final favorite = context
         .watch<FavoriteProducts>()
         .checkIfProductIsFavoriteById(productId);
-    final countInCart = context
-        .watch<ShoppingCart>()
-        .getProductCountById(productId);
+    final countInCart =
+        context.watch<ShoppingCart>().getProductCountById(productId);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(product.title),
       ),
-      body: Center(
-          child: Row(
+      body: SingleChildScrollView(
+        child: Column(children: [
+          SizedBox(
+            height: 300,
+            width: double.infinity,
+            child: Image.network(product.imageUrl, fit: BoxFit.cover),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            '€${product.price}',
+            style: TextStyle(color: Colors.grey, fontSize: 20),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            width: double.infinity,
+            child: Text(
+              product.description,
+              textAlign: TextAlign.center,
+              softWrap: true,
+            ),
+          ),
+           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               IconButton(
@@ -50,17 +73,17 @@ class ProductDetailScreen extends StatelessWidget {
                 onPressed: () => _toggleFavorite(context, productId),
               ),
               IconButton(
-                icon: Badge(
-                  child: Icon(
-                    countInCart > 0 ? Icons.shopping_cart : Icons.add_shopping_cart,
-                    color: countInCart > 0 ? Colors.amber : Colors.grey,
-                  ),
-                  value: countInCart.toString(),
+                icon: Icon(
+                  countInCart > 0
+                      ? Icons.shopping_cart
+                      : Icons.add_shopping_cart,
+                  color: countInCart > 0 ? Colors.amber : Colors.grey,
                 ),
                 onPressed: () => _addToCart(context, product),
               )
             ],
           )
+        ]),
       ),
     );
   }
