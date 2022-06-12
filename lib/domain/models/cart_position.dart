@@ -13,4 +13,10 @@ class CartPosition {
       @required this.product,
       @required this.count,
       @required this.price});
+
+  CartPosition.withDefaultPrice({String id, Product product, int count})
+      : id = id,
+        product = product,
+        count = count,
+        price = count * product.price;
 }

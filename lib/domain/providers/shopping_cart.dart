@@ -11,6 +11,19 @@ class ShoppingCart with ChangeNotifier {
         .fold(0, (previousValue, element) => previousValue + element.count);
   }
 
+  int get positionsCount {
+    return _productsInCart.length;
+  }
+
+  List<CartPosition> get positions {
+    return _productsInCart.values.toList();
+  }
+
+  double get totalPrice {
+    return _productsInCart.values
+        .fold(0.0, (previousValue, element) => previousValue + element.price);
+  }
+
   int getProductCountById(String productId) {
     if (checkIfProductIsInCartById(productId)) {
       return _productsInCart[productId].count;
@@ -27,20 +40,16 @@ class ShoppingCart with ChangeNotifier {
     if (checkIfProductIsInCartById(product.id)) {
       _productsInCart.update(product.id, (currentPosition) {
         var newCount = currentPosition.count + count;
-        return CartPosition(
+        return CartPosition.withDefaultPrice(
             id: currentPosition.id,
             product: currentPosition.product,
-            count: newCount,
-            price: newCount * product.price);
+            count: newCount);
       });
     } else {
       _productsInCart.putIfAbsent(
           product.id,
-          () => CartPosition(
-              id: DateTime.now().toString(),
-              product: product,
-              count: count,
-              price: count * product.price));
+          () => CartPosition.withDefaultPrice(
+              id: DateTime.now().toString(), product: product, count: count));
     }
     notifyListeners();
   }
@@ -53,21 +62,19 @@ class ShoppingCart with ChangeNotifier {
     var newCount = _productsInCart[product.id].count - count;
     if (newCount > 0) {
       _productsInCart.update(product.id, (currentPosition) {
-            var newCount = currentPosition.count + count;
-            return CartPosition(
-                id: currentPosition.id,
-                product: currentPosition.product,
-                count: newCount,
-                price: newCount * product.price);
-          });
+        return CartPosition.withDefaultPrice(
+            id: currentPosition.id,
+            product: currentPosition.product,
+            count: newCount);
+      });
     } else {
-      removeProductWithIdFromCart(product.id);
+      removePosition(product);
     }
     notifyListeners();
   }
 
-  void removeProductWithIdFromCart(String productId) {
-    _productsInCart.remove(productId);
+  void removePosition(Product product) {
+    _productsInCart.remove(product.id);
     notifyListeners();
   }
 }
