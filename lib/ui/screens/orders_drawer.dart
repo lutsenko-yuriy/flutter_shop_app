@@ -28,19 +28,23 @@ class OrdersDrawer extends StatelessWidget {
                   style: TextStyle(
                       fontFamily: 'Anton',
                       fontSize: 32,
-                      color: Theme.of(context).primaryColor)),
+                      color: Colors.white)),
             ),
+            Divider(),
             ListTile(
               style: ListTileStyle.drawer,
+              leading: Icon(Icons.shopping_cart),
               title: Text('Products'),
               onTap: () => _openProducts(context),
             ),
             Divider(),
             ListTile(
               style: ListTileStyle.drawer,
+              leading: Icon(Icons.shopping_bag),
               title: Text('My Orders'),
               onTap: () => _openOrders(context),
-            )
+            ),
+            Divider(),
           ],
         ),
       ),

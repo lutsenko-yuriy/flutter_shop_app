@@ -13,11 +13,11 @@ class OrderItem extends StatefulWidget {
 }
 
 class _OrderItemState extends State<OrderItem> {
-  var expanded = false;
+  var _expanded = false;
 
   void _toggleExpand() {
     setState(() {
-      expanded = !expanded;
+      _expanded = !_expanded;
     });
   }
 
@@ -32,10 +32,30 @@ class _OrderItemState extends State<OrderItem> {
               subtitle: Text(DateFormat('dd MMMM yyyy HH:mm')
                   .format(widget._order.orderTime)),
               trailing: IconButton(
-                icon: Icon(expanded ? Icons.expand_less : Icons.expand_more),
+                icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
                 onPressed: _toggleExpand,
               ),
-            )
+            ),
+            if (_expanded) Divider(),
+            if (_expanded)
+              Container(
+                height: 100,
+                width: double.infinity,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: widget._order.positions.map((position) {
+                    return Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Image.network(
+                        position.product.imageUrl,
+                        fit: BoxFit.cover,
+                        height: 100,
+                        width: 100,
+                      ),
+                    );
+                  }).toList(),
+                ),
+              )
           ],
         ));
   }
