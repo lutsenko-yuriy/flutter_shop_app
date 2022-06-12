@@ -77,4 +77,9 @@ class ShoppingCart with ChangeNotifier {
     _productsInCart.remove(product.id);
     notifyListeners();
   }
+
+  void clearCart() {
+    _productsInCart = {};
+    notifyListeners();
+  }
 }

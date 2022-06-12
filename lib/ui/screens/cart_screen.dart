@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/domain/models/cart_position.dart';
+import 'package:flutter_complete_guide/domain/models/order.dart';
 import 'package:flutter_complete_guide/domain/providers/shopping_cart.dart';
 import 'package:flutter_complete_guide/ui/widgets/cart_item.dart';
 import 'package:provider/provider.dart';
+
+import '../../domain/providers/orders.dart';
 
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart';
@@ -11,6 +14,13 @@ class CartScreen extends StatelessWidget {
 
   void _removePosition(BuildContext context, CartPosition position) {
     context.read<ShoppingCart>().removePosition(position.product);
+  }
+
+  void _submitOrder(BuildContext context, List<CartPosition> positions) {
+    context.read<Orders>().addOrder(Order.rightNowWithDefaultPrice(positions));
+    context.read<ShoppingCart>().clearCart();
+
+    Navigator.of(context).pop();
   }
 
   @override
@@ -50,7 +60,9 @@ class CartScreen extends StatelessWidget {
                       backgroundColor: Theme.of(context).primaryColor,
                     ),
                     TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _submitOrder(context, positions);
+                        },
                         child: Text('ORDER NOW',
                             style: TextStyle(
                               color: Theme.of(context).primaryColor,

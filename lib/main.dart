@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/domain/providers/favorite_products.dart';
+import 'package:flutter_complete_guide/domain/providers/orders.dart';
 import 'package:flutter_complete_guide/ui/screens/cart_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AllProducts(),),
         ChangeNotifierProvider(create: (_) => FavoriteProducts(),),
         ChangeNotifierProvider(create: (_) => ShoppingCart(),),
+        ChangeNotifierProvider(create: (_) => Orders(),),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
