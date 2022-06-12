@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/domain/models/cart_position.dart';
 import 'package:flutter_complete_guide/domain/models/order.dart';
 import 'package:flutter_complete_guide/domain/providers/shopping_cart.dart';
+import 'package:flutter_complete_guide/ui/screens/orders_screen.dart';
 import 'package:flutter_complete_guide/ui/widgets/cart_item.dart';
 import 'package:provider/provider.dart';
 
@@ -17,10 +18,12 @@ class CartScreen extends StatelessWidget {
   }
 
   void _submitOrder(BuildContext context, List<CartPosition> positions) {
-    context.read<Orders>().addOrder(Order.rightNowWithDefaultPrice(positions));
-    context.read<ShoppingCart>().clearCart();
+    if (positions.isNotEmpty) {
+      context.read<Orders>().addOrder(Order.rightNowWithDefaultPrice(positions));
+      context.read<ShoppingCart>().clearCart();
 
-    Navigator.of(context).pop();
+      Navigator.of(context).pushNamed(OrdersScreen.routeName);
+    }
   }
 
   @override
