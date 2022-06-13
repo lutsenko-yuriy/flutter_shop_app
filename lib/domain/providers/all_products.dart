@@ -65,4 +65,10 @@ class AllProducts with ChangeNotifier {
 
     notifyListeners();
   }
+
+  void removeProduct(Product product) {
+    _items.removeWhere((element) => element.id == product.id);
+    notifyListeners();
+  }
+
 }

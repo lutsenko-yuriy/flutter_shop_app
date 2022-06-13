@@ -17,7 +17,7 @@ class UserProductsScreen extends StatelessWidget {
   }
 
   void _onDeleteRequested(BuildContext context, Product product) {
-    print('The product ${product.title} is about to get deleted');
+    context.read<AllProducts>().removeProduct(product);
   }
 
   void _onNewProductRequested(BuildContext context) {
