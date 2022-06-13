@@ -16,7 +16,15 @@ class ProductItem extends StatelessWidget {
   }
 
   void _addToCart(BuildContext context) {
-    context.read<ShoppingCart>().addProduct(_product);
+    var shoppingCartData = context.read<ShoppingCart>();
+    shoppingCartData.addProduct(_product);
+
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      duration: Duration(seconds: 2),
+      content: Text('${_product.title} is added to cart', textAlign: TextAlign.center,),
+      action: SnackBarAction(label: 'Undo', onPressed: () => shoppingCartData.removeProduct(_product)),
+    ));
   }
 
   void _goToDetails(BuildContext context) {
@@ -29,9 +37,8 @@ class ProductItem extends StatelessWidget {
     var favorite = context
         .watch<FavoriteProducts>()
         .checkIfProductIsFavoriteById(_product.id);
-    var inCart = context
-        .watch<ShoppingCart>()
-        .checkIfProductIsInCartById(_product.id);
+    var inCart =
+        context.watch<ShoppingCart>().checkIfProductIsInCartById(_product.id);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
@@ -54,9 +61,8 @@ class ProductItem extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             trailing: IconButton(
-              icon: Icon(inCart
-                  ? Icons.shopping_cart
-                  : Icons.add_shopping_cart),
+              icon:
+                  Icon(inCart ? Icons.shopping_cart : Icons.add_shopping_cart),
               onPressed: () => _addToCart(context),
               color: Theme.of(context).colorScheme.secondary,
             )),
