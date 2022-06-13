@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/ui/screens/orders_screen.dart';
 import 'package:flutter_complete_guide/ui/screens/products_overview_screen.dart';
+import 'package:flutter_complete_guide/ui/screens/user_products_screen.dart';
 
 class OrdersDrawer extends StatelessWidget {
   const OrdersDrawer({Key key}) : super(key: key);
@@ -12,6 +13,10 @@ class OrdersDrawer extends StatelessWidget {
 
   void _openOrders(BuildContext context) {
     Navigator.of(context).pushReplacementNamed(OrdersScreen.routeName);
+  }
+
+  void _openUserProducts(BuildContext context) {
+    Navigator.of(context).pushReplacementNamed(UserProductsScreen.routeName);
   }
 
   @override
@@ -40,11 +45,18 @@ class OrdersDrawer extends StatelessWidget {
             Divider(),
             ListTile(
               style: ListTileStyle.drawer,
-              leading: Icon(Icons.shopping_bag),
+              leading: Icon(Icons.credit_card),
               title: Text('My Orders'),
               onTap: () => _openOrders(context),
             ),
             Divider(),
+            ListTile(
+              style: ListTileStyle.drawer,
+              leading: Icon(Icons.shopping_bag),
+              title: Text('My Products'),
+              onTap: () => _openUserProducts(context),
+            ),
+            Divider()
           ],
         ),
       ),
