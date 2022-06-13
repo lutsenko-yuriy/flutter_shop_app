@@ -46,4 +46,16 @@ class AllProducts with ChangeNotifier {
      return _items.firstWhere((product) => product.id == productId);
    }
 
+   void addOrReplaceProduct(Product product) {
+     final index = _items.indexWhere((element) => element.id == product.id);
+
+     if (index < 0) {
+       _items.add(product);
+     } else {
+       _items[index] = product;
+     }
+
+     notifyListeners();
+   }
+
 }
