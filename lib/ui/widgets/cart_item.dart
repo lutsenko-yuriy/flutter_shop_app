@@ -12,8 +12,9 @@ class CartItem extends StatelessWidget {
       : super(key: key);
 
   void _openProductDetails(BuildContext context) {
-    Navigator.of(context).pushNamed(ProductDetailScreen.routeName,
-        arguments: {ProductDetailScreen.productIdArgument: _position.product.id});
+    Navigator.of(context).pushNamed(ProductDetailScreen.routeName, arguments: {
+      ProductDetailScreen.productIdArgument: _position.product.id
+    });
   }
 
   @override
@@ -34,6 +35,26 @@ class CartItem extends StatelessWidget {
       onDismissed: (_) {
         _removePosition(_position);
       },
+      confirmDismiss: (_) => showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: Text('Are you sure?'),
+                content: Text('Do you want to remove the item from the cart?'),
+                actions: [
+                  TextButton(
+                    child: Text('No'),
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                  TextButton(
+                    child: Text('Yes'),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                  )
+                ],
+              )),
       child: GestureDetector(
         onTap: () {
           _openProductDetails(context);
