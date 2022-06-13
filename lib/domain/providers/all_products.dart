@@ -38,24 +38,31 @@ class AllProducts with ChangeNotifier {
     ),
   ];
 
-   List<Product> get items {
-     return [..._items];
-   }
+  List<Product> get items {
+    return [..._items];
+  }
 
-   Product productById(String productId) {
-     return _items.firstWhere((product) => product.id == productId);
-   }
+  Product productById(String productId) {
+    return _items.firstWhere((product) => product.id == productId);
+  }
 
-   void addOrReplaceProduct(Product product) {
-     final index = _items.indexWhere((element) => element.id == product.id);
+  void addOrReplaceProduct(Product product) {
+    final index = _items.indexWhere((element) => element.id == product.id);
 
-     if (index < 0) {
-       _items.add(product);
-     } else {
-       _items[index] = product;
-     }
+    if (index < 0) {
+      var productToAdd = product.id != null
+          ? product
+          : Product(
+              id: DateTime.now().toString(),
+              title: product.title,
+              description: product.description,
+              price: product.price,
+              imageUrl: product.imageUrl);
+      _items.add(productToAdd);
+    } else {
+      _items[index] = product;
+    }
 
-     notifyListeners();
-   }
-
+    notifyListeners();
+  }
 }

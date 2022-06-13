@@ -13,7 +13,7 @@ class UserProductsScreen extends StatelessWidget {
   const UserProductsScreen({Key key}) : super(key: key);
 
   void _onEditingRequested(BuildContext context, Product product) {
-    Navigator.of(context).pushNamed(EditProductScreen.routeName, arguments: { EditProductScreen.productArgument : product });
+    Navigator.of(context).pushNamed(EditProductScreen.routeName, arguments: product.id);
   }
 
   void _onDeleteRequested(BuildContext context, Product product) {

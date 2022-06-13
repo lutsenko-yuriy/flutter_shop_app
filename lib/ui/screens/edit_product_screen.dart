@@ -6,7 +6,7 @@ import '../../domain/models/product.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-product';
-  static const productArgument = 'product';
+  static const productIdArgument = 'productId';
 
   const EditProductScreen({Key key}) : super(key: key);
 
@@ -15,11 +15,15 @@ class EditProductScreen extends StatefulWidget {
 }
 
 class _EditProductScreenState extends State<EditProductScreen> {
+  var _shouldBeInit = true;
   final _priceFocusNode = FocusNode();
   final _descriptionFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
+
+  var _initialProduct =
+      Product(id: null, title: '', description: '', price: 0, imageUrl: '');
 
   var _editedProduct =
       Product(id: null, title: '', description: '', price: 0, imageUrl: '');
@@ -28,6 +32,30 @@ class _EditProductScreenState extends State<EditProductScreen> {
   void initState() {
     _imageUrlFocusNode.addListener(_updateImageUrl);
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_shouldBeInit) {
+      var productId = ModalRoute.of(context).settings.arguments as String;
+      if (productId != null) {
+        final product = context.read<AllProducts>().productById(productId);
+        _editedProduct = Product(
+            id: productId,
+            title: product.title,
+            description: product.description,
+            price: product.price,
+            imageUrl: product.imageUrl);
+
+        _initialProduct = _editedProduct;
+
+        _imageUrlController.text = product.imageUrl;
+      }
+    }
+
+    _shouldBeInit = false;
   }
 
   void _updateImageUrl() {
@@ -55,30 +83,20 @@ class _EditProductScreenState extends State<EditProductScreen> {
       return;
     }
     _form.currentState.save();
-    if (_editedProduct.id == null) {
-      _editedProduct = Product(
-          id: DateTime.now().toString() ,
-          title: _editedProduct.title,
-          description: _editedProduct.description,
-          price: _editedProduct.price,
-          imageUrl: _editedProduct.imageUrl);
-    }
 
-    context.read<AllProducts>().addOrReplaceProduct(_editedProduct);
+    if (_editedProduct != _initialProduct) {
+      context.read<AllProducts>().addOrReplaceProduct(_editedProduct);
+    }
     Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    var arguments =
-        ModalRoute.of(context).settings?.arguments as Map<String, Product>;
-
-    var product =
-        arguments == null ? null : arguments[EditProductScreen.productArgument];
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(product == null ? 'Add a new product' : 'Edit the product'),
+        title: Text(_editedProduct.id == null
+            ? 'Add a new product'
+            : 'Edit the product'),
         actions: [IconButton(onPressed: _saveForm, icon: Icon(Icons.save))],
       ),
       body: Padding(
@@ -88,6 +106,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           child: ListView(
             children: [
               TextFormField(
+                initialValue: _initialProduct.title,
                 decoration: InputDecoration(labelText: 'Title'),
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (_) =>
@@ -108,6 +127,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
               ),
               TextFormField(
+                  initialValue: _initialProduct.price.toStringAsFixed(2),
                   decoration: InputDecoration(labelText: 'Price in €'),
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.number,
@@ -135,6 +155,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         imageUrl: _editedProduct.imageUrl);
                   }),
               TextFormField(
+                initialValue: _initialProduct.description,
                 decoration: InputDecoration(labelText: 'Description'),
                 maxLines: 3,
                 keyboardType: TextInputType.multiline,
