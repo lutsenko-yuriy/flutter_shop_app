@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import '../models/product.dart';
 
@@ -46,29 +49,32 @@ class AllProducts with ChangeNotifier {
     return _items.firstWhere((product) => product.id == productId);
   }
 
-  void addOrReplaceProduct(Product product) {
-    final index = _items.indexWhere((element) => element.id == product.id);
+  Future<void> addOrReplaceProduct(Product product) {
+    return http
+        .post(
+            Uri.parse(
+                "https://flutter-shop-fec37-default-rtdb.europe-west1.firebasedatabase.app/products.json"),
+            body: json.encode({
+              'title': product.title,
+              'description': product.description,
+              'price': product.price,
+              'imageUrl': product.imageUrl,
+            }))
+        .then((response) {
+      final productToAdd = Product(
+          id: json.decode(response.body)['name'],
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          imageUrl: product.imageUrl);
 
-    if (index < 0) {
-      var productToAdd = product.id != null
-          ? product
-          : Product(
-              id: DateTime.now().toString(),
-              title: product.title,
-              description: product.description,
-              price: product.price,
-              imageUrl: product.imageUrl);
       _items.add(productToAdd);
-    } else {
-      _items[index] = product;
-    }
-
-    notifyListeners();
+      notifyListeners();
+    });
   }
 
   void removeProduct(Product product) {
     _items.removeWhere((element) => element.id == product.id);
     notifyListeners();
   }
-
 }

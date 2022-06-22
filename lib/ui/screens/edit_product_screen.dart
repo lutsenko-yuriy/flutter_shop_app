@@ -22,6 +22,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
 
+  bool _isLoading = false;
+
   var _initialProduct =
       Product(id: null, title: '', description: '', price: 0, imageUrl: '');
 
@@ -85,21 +87,22 @@ class _EditProductScreenState extends State<EditProductScreen> {
     _form.currentState.save();
 
     if (_editedProduct != _initialProduct) {
-      context.read<AllProducts>().addOrReplaceProduct(_editedProduct);
+      setState(() {
+        this._isLoading = true;
+      });
+      context
+          .read<AllProducts>()
+          .addOrReplaceProduct(_editedProduct)
+          .then((value) {
+        this._isLoading = false;
+        Navigator.of(context).pop();
+      });
     }
-    Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_editedProduct.id == null
-            ? 'Add a new product'
-            : 'Edit the product'),
-        actions: [IconButton(onPressed: _saveForm, icon: Icon(Icons.save))],
-      ),
-      body: Padding(
+    var standardBody = Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _form,
@@ -228,7 +231,22 @@ class _EditProductScreenState extends State<EditProductScreen> {
             ],
           ),
         ),
+      );
+
+    var loadingScreen = Container(
+      height: double.infinity,
+      width: double.infinity,
+      alignment: Alignment.center,
+      child: CircularProgressIndicator(),
+    );
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_editedProduct.id == null
+            ? 'Add a new product'
+            : 'Edit the product'),
+        actions: [IconButton(onPressed: _saveForm, icon: Icon(Icons.save))],
       ),
+      body: _isLoading ? loadingScreen : standardBody,
     );
   }
 }
