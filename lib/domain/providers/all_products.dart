@@ -53,7 +53,7 @@ class AllProducts with ChangeNotifier {
     return http
         .post(
             Uri.parse(
-                "https://flutter-shop-fec37-default-rtdb.europe-west1.firebasedatabase.app/products.json"),
+                "https://flutter-shop-fec37-default-rtdb.europe-west1.firebasedatabase.app/products "),
             body: json.encode({
               'title': product.title,
               'description': product.description,
@@ -70,6 +70,10 @@ class AllProducts with ChangeNotifier {
 
       _items.add(productToAdd);
       notifyListeners();
+    })
+    .catchError((error) {
+      print(error);
+      throw error;
     });
   }
 
