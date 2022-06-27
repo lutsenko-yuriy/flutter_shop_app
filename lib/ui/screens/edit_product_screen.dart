@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/domain/providers/all_products.dart';
 import 'package:provider/provider.dart';
@@ -80,37 +82,41 @@ class _EditProductScreenState extends State<EditProductScreen> {
     super.dispose();
   }
 
-  void _saveForm() {
+  Future<void > _saveForm() async {
     if (!_form.currentState.validate()) {
       return;
     }
     _form.currentState.save();
 
-    if (_editedProduct != _initialProduct) {
+    if (_editedProduct == _initialProduct) {
+      return;
+    }
+
+    setState(() {
+      this._isLoading = true;
+    });
+    try {
+      await context
+          .read<AllProducts>().addOrReplaceProduct(_editedProduct);
+    } catch (error) {
+      await showDialog<Null>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('An error occurred'),
+            content: Text('Something went wrong'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                  },
+                  child: Text('Okay'))
+            ],
+          ));
+    } finally {
       setState(() {
-        this._isLoading = true;
-      });
-      context
-          .read<AllProducts>()
-          .addOrReplaceProduct(_editedProduct)
-          .catchError((error) {
-        return showDialog<Null>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-                  title: Text('An error occurred'),
-                  content: Text('Something went wrong'),
-                  actions: [
-                    TextButton(
-                        onPressed: () {
-                          Navigator.of(ctx).pop();
-                        },
-                        child: Text('Okay'))
-                  ],
-                ));
-      }).then((value) {
         this._isLoading = false;
-        Navigator.of(context).pop();
       });
+      Navigator.of(context).pop();
     }
   }
 

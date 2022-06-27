@@ -49,18 +49,18 @@ class AllProducts with ChangeNotifier {
     return _items.firstWhere((product) => product.id == productId);
   }
 
-  Future<void> addOrReplaceProduct(Product product) {
-    return http
-        .post(
-            Uri.parse(
-                "https://flutter-shop-fec37-default-rtdb.europe-west1.firebasedatabase.app/products.json"),
-            body: json.encode({
-              'title': product.title,
-              'description': product.description,
-              'price': product.price,
-              'imageUrl': product.imageUrl,
-            }))
-        .then((response) {
+  void addOrReplaceProduct(Product product) async {
+    try {
+      final response = await http
+              .post(
+                  Uri.parse(
+                      "https://flutter-shop-fec37-default-rtdb.europe-west1.firebasedatabase.app/products.json "),
+                  body: json.encode({
+                    'title': product.title,
+                    'description': product.description,
+                    'price': product.price,
+                    'imageUrl': product.imageUrl,
+                  }));
       final productToAdd = Product(
           id: json.decode(response.body)['name'],
           title: product.title,
@@ -70,11 +70,10 @@ class AllProducts with ChangeNotifier {
 
       _items.add(productToAdd);
       notifyListeners();
-    })
-    .catchError((error) {
-      print(error);
-      throw error;
-    });
+    } catch (e) {
+      print(e);
+      throw e;
+    }
   }
 
   void removeProduct(Product product) {
