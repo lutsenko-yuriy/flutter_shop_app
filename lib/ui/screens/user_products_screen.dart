@@ -24,6 +24,10 @@ class UserProductsScreen extends StatelessWidget {
     Navigator.of(context).pushNamed(EditProductScreen.routeName);
   }
 
+  Future<void> _refreshProducts(BuildContext context) async {
+    await context.read<AllProducts>().fetchAndSetProducts();
+  }
+
   @override
   Widget build(BuildContext context) {
     final products = context.watch<AllProducts>().items;
@@ -35,20 +39,23 @@ class UserProductsScreen extends StatelessWidget {
         ],
       ),
       drawer: OrdersDrawer(),
-      body: Padding(
-        padding: EdgeInsets.all(8),
-        child: ListView.builder(
-            itemCount: products.length,
-            itemBuilder: (_, index) => Column(
-                  children: [
-                    UserProductItem(
-                      products[index],
-                      onEditingRequested: (product) => _onEditingRequested(context, product),
-                      onDeleteRequested: (product) => _onDeleteRequested(context, product),
-                    ),
-                    Divider()
-                  ],
-                )),
+      body: RefreshIndicator(
+        onRefresh: () => _refreshProducts(context),
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: ListView.builder(
+              itemCount: products.length,
+              itemBuilder: (_, index) => Column(
+                    children: [
+                      UserProductItem(
+                        products[index],
+                        onEditingRequested: (product) => _onEditingRequested(context, product),
+                        onDeleteRequested: (product) => _onDeleteRequested(context, product),
+                      ),
+                      Divider()
+                    ],
+                  )),
+        ),
       ),
     );
   }
