@@ -22,6 +22,20 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var selectedFilterOption = FilterOptions.all;
+  var _isLoading = false;
+
+  @override
+  void initState() {
+    setState(() {
+      _isLoading = true;
+    });
+    context.read<AllProducts>().fetchAndSetProducts().then((value) => {
+      setState(() {
+        _isLoading = false;
+      })
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +98,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           )
         ],
       ),
-      body: widgetToDisplay,
+      body: _isLoading ? Center(child: CircularProgressIndicator(),) : widgetToDisplay,
     );
   }
 }
