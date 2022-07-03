@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/domain/providers/all_products.dart';
 import 'package:provider/provider.dart';
@@ -96,8 +94,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
       this._isLoading = true;
     });
     try {
-      await context
-          .read<AllProducts>().addOrReplaceProduct(_editedProduct);
+      if (_editedProduct.id == null) {
+        await context
+            .read<AllProducts>().addProduct(_editedProduct);
+      } else {
+        await context
+            .read<AllProducts>().replaceProduct(_editedProduct);
+      }
     } catch (error) {
       await showDialog<Null>(
           context: context,

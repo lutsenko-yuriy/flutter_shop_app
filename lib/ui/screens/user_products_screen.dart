@@ -16,8 +16,8 @@ class UserProductsScreen extends StatelessWidget {
     Navigator.of(context).pushNamed(EditProductScreen.routeName, arguments: product.id);
   }
 
-  void _onDeleteRequested(BuildContext context, Product product) {
-    context.read<AllProducts>().removeProduct(product);
+  void _onDeleteRequested(BuildContext context, Product product) async {
+    await context.read<AllProducts>().removeProduct(product);
   }
 
   void _onNewProductRequested(BuildContext context) {
