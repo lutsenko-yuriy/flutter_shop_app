@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
+import '../../network/http_exception.dart';
 import '../models/product.dart';
 
 class AllProducts with ChangeNotifier {
-
   static const _baseUrl =
       "https://flutter-shop-fec37-default-rtdb.europe-west1.firebasedatabase.app";
   static final _productsUri = Uri.parse("${_baseUrl}/products.json");
@@ -72,7 +72,8 @@ class AllProducts with ChangeNotifier {
 
   Future<Response> _buildUpdateProductRequest(Product product) {
     if (product.id == null) {
-      throw Exception("Attempted to update the existing product without an existing ID");
+      throw Exception(
+          "Attempted to update the existing product without an existing ID");
     }
 
     return http.patch(_buildUpdateProductUri(product.id),
@@ -84,12 +85,21 @@ class AllProducts with ChangeNotifier {
         }));
   }
 
-  Future<Response> _buildDeleteProductRequest(Product product) {
+  Future<Response> _buildDeleteProductRequest(Product product) async {
     if (product.id == null) {
-      throw Exception("Attempted to update the existing product without an existing ID");
+      throw Exception(
+          "Attempted to update the existing product without an existing ID");
     }
 
-    return http.delete(_buildUpdateProductUri(product.id),);
+    var response = await http.delete(
+      _buildUpdateProductUri(product.id),
+    );
+
+    if (response.statusCode >= 400) {
+      throw HttpException("Could not delete product");
+    }
+
+    return response;
   }
 
   Future<void> addProduct(Product product) async {
@@ -128,14 +138,18 @@ class AllProducts with ChangeNotifier {
   }
 
   Future<void> removeProduct(Product product) async {
+    final indexToRemove =
+        _items.indexWhere((element) => element.id == product.id);
+    var itemToRemove = _items[indexToRemove];
+    _items.removeAt(indexToRemove);
+    notifyListeners();
+
     try {
       await _buildDeleteProductRequest(product);
-      _items.removeWhere((element) => element.id == product.id);
-
+    } catch (exception) {
+      _items.insert(indexToRemove, itemToRemove);
       notifyListeners();
-    } catch (e) {
-      print(e);
-      throw e;
+      throw exception;
     }
   }
 }

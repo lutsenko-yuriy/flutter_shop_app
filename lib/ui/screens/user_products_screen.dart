@@ -17,7 +17,11 @@ class UserProductsScreen extends StatelessWidget {
   }
 
   void _onDeleteRequested(BuildContext context, Product product) async {
-    await context.read<AllProducts>().removeProduct(product);
+    try {
+      await context.read<AllProducts>().removeProduct(product);
+    } catch (exception) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Deleting failed')));
+    }
   }
 
   void _onNewProductRequested(BuildContext context) {
