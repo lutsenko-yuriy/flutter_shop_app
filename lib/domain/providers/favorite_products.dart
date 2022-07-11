@@ -15,11 +15,11 @@ class FavoriteProducts with ChangeNotifier {
   Future<void> fetchAndSetFavorites() async {
     try {
       final response = await http.get(_favoritesUri);
-      final responseAsObject = json.decode(response.body) as List<String>;
+      final responseAsObject = (json.decode(response.body) as List<dynamic>).map((e) => e.toString());
 
       _favoriteProductsIds =
           responseAsObject == null ? {} : responseAsObject.toSet();
-      print(_favoriteProductsIds);
+      print("Favorites products are : ${_favoriteProductsIds}");
 
       notifyListeners();
     } catch (error) {

@@ -31,6 +31,9 @@ class CartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final ShoppingCart cart = context.watch<ShoppingCart>();
     var positions = cart.positions;
+
+    var cartIsEmpty = positions.isEmpty;
+
     return Scaffold(
         appBar: AppBar(
           title: Text('My Cart'),
@@ -64,10 +67,13 @@ class CartScreen extends StatelessWidget {
                       backgroundColor: Theme.of(context).primaryColor,
                     ),
                     TextButton(
-                        onPressed: () {
-                          _submitOrder(context, positions);
-                        },
-                        child: Text('ORDER NOW',
+                        onPressed: cartIsEmpty
+                            ? null
+                            : () {
+                                _submitOrder(context, positions);
+                              },
+                        child: Text(
+                            cartIsEmpty ? 'CANNOT ORDER NOTHING!' : 'ORDER NOW',
                             style: TextStyle(
                               color: Theme.of(context).primaryColor,
                             )))
