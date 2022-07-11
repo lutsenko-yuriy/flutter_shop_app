@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_complete_guide/domain/providers/all_products.dart';
-import 'package:flutter_complete_guide/ui/screens/edit_product_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../domain/models/product.dart';
+import '../../domain/providers/all_products.dart';
+import '../../domain/providers/favorite_products.dart';
 import '../widgets/user_product_item.dart';
+import 'edit_product_screen.dart';
 import 'orders_drawer.dart';
 
 class UserProductsScreen extends StatelessWidget {
@@ -13,14 +14,16 @@ class UserProductsScreen extends StatelessWidget {
   const UserProductsScreen({Key key}) : super(key: key);
 
   void _onEditingRequested(BuildContext context, Product product) {
-    Navigator.of(context).pushNamed(EditProductScreen.routeName, arguments: product.id);
+    Navigator.of(context)
+        .pushNamed(EditProductScreen.routeName, arguments: product.id);
   }
 
   void _onDeleteRequested(BuildContext context, Product product) async {
     try {
       await context.read<AllProducts>().removeProduct(product);
     } catch (exception) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Deleting failed')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Deleting failed')));
     }
   }
 
@@ -29,7 +32,10 @@ class UserProductsScreen extends StatelessWidget {
   }
 
   Future<void> _refreshProducts(BuildContext context) async {
-    await context.read<AllProducts>().fetchAndSetProducts();
+    await Future.wait([
+      context.read<AllProducts>().fetchAndSetProducts(),
+      context.read<FavoriteProducts>().fetchAndSetFavorites()
+    ]);
   }
 
   @override
@@ -39,7 +45,9 @@ class UserProductsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('My Products'),
         actions: [
-          IconButton(onPressed: () => _onNewProductRequested(context), icon: Icon(Icons.add))
+          IconButton(
+              onPressed: () => _onNewProductRequested(context),
+              icon: Icon(Icons.add))
         ],
       ),
       drawer: OrdersDrawer(),
@@ -53,8 +61,10 @@ class UserProductsScreen extends StatelessWidget {
                     children: [
                       UserProductItem(
                         products[index],
-                        onEditingRequested: (product) => _onEditingRequested(context, product),
-                        onDeleteRequested: (product) => _onDeleteRequested(context, product),
+                        onEditingRequested: (product) =>
+                            _onEditingRequested(context, product),
+                        onDeleteRequested: (product) =>
+                            _onDeleteRequested(context, product),
                       ),
                       Divider()
                     ],

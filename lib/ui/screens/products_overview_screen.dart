@@ -29,19 +29,20 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
     setState(() {
       _isLoading = true;
     });
-    context.read<AllProducts>().fetchAndSetProducts().then((value) => {
-      setState(() {
-        _isLoading = false;
-      })
-    });
+    Future.wait([
+      context.read<AllProducts>().fetchAndSetProducts(),
+      context.read<FavoriteProducts>().fetchAndSetFavorites()
+    ]).then((value) => {
+          setState(() {
+            _isLoading = false;
+          })
+        });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final loadedProducts = context
-        .watch<AllProducts>()
-        .items;
+    final loadedProducts = context.watch<AllProducts>().items;
     final favoriteProducts = context.watch<FavoriteProducts>();
 
     List<Product> productsToDisplay;
@@ -49,7 +50,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
       case FilterOptions.favorites:
         productsToDisplay = loadedProducts
             .where((product) =>
-            favoriteProducts.checkIfProductIsFavoriteById(product.id))
+                favoriteProducts.checkIfProductIsFavoriteById(product.id))
             .toList();
         break;
       case FilterOptions.all:
@@ -60,8 +61,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
     final Widget widgetToDisplay = productsToDisplay.isNotEmpty
         ? ProductsGrid(productsToDisplay)
         : Center(
-      child: Text('The list is empty'),
-    );
+            child: Text('The list is empty'),
+          );
 
     return Scaffold(
       drawer: OrdersDrawer(),
@@ -75,8 +76,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                 selectedFilterOption = selectedValue;
               });
             },
-            itemBuilder: (_) =>
-            [
+            itemBuilder: (_) => [
               PopupMenuItem(
                   child: Text('Only Favorites'),
                   value: FilterOptions.favorites),
@@ -86,19 +86,21 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           Consumer<ShoppingCart>(
               builder: (_, value, child) {
                 return Badge(
-                    child: child,
-                    value: value.productsCount.toString());
+                    child: child, value: value.productsCount.toString());
               },
               child: IconButton(
                 icon: Icon(Icons.shopping_cart),
                 onPressed: () {
                   Navigator.of(context).pushNamed(CartScreen.routeName);
                 },
-              )
-          )
+              ))
         ],
       ),
-      body: _isLoading ? Center(child: CircularProgressIndicator(),) : widgetToDisplay,
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : widgetToDisplay,
     );
   }
 }

@@ -2,14 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 
+import '../../network/http_base_url.dart';
 import '../../network/http_exception.dart';
 import '../models/product.dart';
 
 class AllProducts with ChangeNotifier {
-  static const _baseUrl =
-      "https://flutter-shop-fec37-default-rtdb.europe-west1.firebasedatabase.app";
+  static const _baseUrl = BaseUrl.baseUrl;
   static final _productsUri = Uri.parse("${_baseUrl}/products.json");
 
   static Uri _buildUpdateProductUri(String productId) {
@@ -56,7 +55,7 @@ class AllProducts with ChangeNotifier {
     return _items.firstWhere((product) => product.id == productId);
   }
 
-  Future<Response> _buildNewProductRequest(Product product) {
+  Future<http.Response> _buildNewProductRequest(Product product) {
     if (product.id != null) {
       throw Exception("Attempted to add a new product with the existing ID");
     }
@@ -70,7 +69,7 @@ class AllProducts with ChangeNotifier {
         }));
   }
 
-  Future<Response> _buildUpdateProductRequest(Product product) {
+  Future<http.Response> _buildUpdateProductRequest(Product product) {
     if (product.id == null) {
       throw Exception(
           "Attempted to update the existing product without an existing ID");
@@ -85,7 +84,7 @@ class AllProducts with ChangeNotifier {
         }));
   }
 
-  Future<Response> _buildDeleteProductRequest(Product product) async {
+  Future<http.Response> _buildDeleteProductRequest(Product product) async {
     if (product.id == null) {
       throw Exception(
           "Attempted to update the existing product without an existing ID");
