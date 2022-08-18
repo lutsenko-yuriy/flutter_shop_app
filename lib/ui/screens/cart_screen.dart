@@ -72,10 +72,11 @@ class CartScreen extends StatelessWidget {
                             : () {
                                 _submitOrder(context, positions);
                               },
-                        child: Text(
-                            cartIsEmpty ? 'CANNOT ORDER NOTHING!' : 'ORDER NOW',
+                        child: Text('ORDER NOW',
                             style: TextStyle(
-                              color: Theme.of(context).primaryColor,
+                              color: cartIsEmpty
+                                  ? Colors.grey
+                                  : Theme.of(context).primaryColor,
                             )))
                   ],
                 ),
