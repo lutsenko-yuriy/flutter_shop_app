@@ -14,15 +14,4 @@ class Order {
       @required this.positions,
       @required this.orderTime});
 
-  factory Order.rightNowWithDefaultPrice(List<CartPosition> positions) {
-    final DateTime orderTime = DateTime.now();
-    final double totalPrice = positions.fold(
-        0.0, (previousValue, element) => previousValue + element.price);
-
-    return Order(
-        id: orderTime.toString(),
-        totalPrice: totalPrice,
-        positions: positions,
-        orderTime: orderTime);
-  }
 }

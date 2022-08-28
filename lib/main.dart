@@ -19,22 +19,31 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AllProducts(),),
-        ChangeNotifierProvider(create: (_) => FavoriteProducts(),),
-        ChangeNotifierProvider(create: (_) => ShoppingCart(),),
-        ChangeNotifierProvider(create: (_) => Orders(),),
+        ChangeNotifierProvider(
+          create: (_) => AllProducts(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => FavoriteProducts(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ShoppingCart(),
+        ),
+        ChangeNotifierProvider(
+          create: (ref) {
+            return Orders(allProducts: ref.read<AllProducts>());
+          },
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'MyShop',
         theme: ThemeData(
             colorScheme: ColorScheme.fromSwatch(
-                primarySwatch: Colors.deepOrange,
+              primarySwatch: Colors.deepOrange,
             ),
-            fontFamily: 'Lato'
-        ),
+            fontFamily: 'Lato'),
         routes: {
-          '/' : (ctx) => ProductsOverviewScreen(),
+          '/': (ctx) => ProductsOverviewScreen(),
           ProductsOverviewScreen.routeName: (ctx) => ProductsOverviewScreen(),
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
           CartScreen.routeName: (ctx) => CartScreen(),

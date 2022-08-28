@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../domain/models/cart_position.dart';
-import '../../domain/models/order.dart';
 import '../../domain/providers/orders.dart';
 import '../../domain/providers/shopping_cart.dart';
 import '../widgets/cart_item.dart';
@@ -16,23 +15,10 @@ class CartScreen extends StatelessWidget {
     context.read<ShoppingCart>().removePosition(position.product);
   }
 
-  void _submitOrder(BuildContext context, List<CartPosition> positions) {
-    if (positions.isNotEmpty) {
-      context
-          .read<Orders>()
-          .addOrder(Order.rightNowWithDefaultPrice(positions));
-      context.read<ShoppingCart>().clearCart();
-
-      Navigator.of(context).pop();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final ShoppingCart cart = context.watch<ShoppingCart>();
     var positions = cart.positions;
-
-    var cartIsEmpty = positions.isEmpty;
 
     return Scaffold(
         appBar: AppBar(
@@ -66,18 +52,7 @@ class CartScreen extends StatelessWidget {
                                   .color)),
                       backgroundColor: Theme.of(context).primaryColor,
                     ),
-                    TextButton(
-                        onPressed: cartIsEmpty
-                            ? null
-                            : () {
-                                _submitOrder(context, positions);
-                              },
-                        child: Text('ORDER NOW',
-                            style: TextStyle(
-                              color: cartIsEmpty
-                                  ? Colors.grey
-                                  : Theme.of(context).primaryColor,
-                            )))
+                    OrderButton(cart: cart)
                   ],
                 ),
               ),
@@ -94,5 +69,55 @@ class CartScreen extends StatelessWidget {
                     }))
           ],
         ));
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  final ShoppingCart cart;
+
+  const OrderButton({Key key, @required this.cart}) : super(key: key);
+
+  void _submitOrder(BuildContext context, List<CartPosition> positions) {
+    if (positions.isNotEmpty) {
+      context.read<Orders>().addOrder(
+          positions,
+          positions.fold(
+              0, (previousValue, element) => previousValue + element.price));
+      context.read<ShoppingCart>().clearCart();
+
+      Navigator.of(context).pop();
+    }
+  }
+
+  @override
+  State<OrderButton> createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  var _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    var cartIsEmpty = this.widget.cart.positions.isEmpty;
+    return TextButton(
+        onPressed: cartIsEmpty || _isLoading
+            ? null
+            : () async {
+                setState(() {
+                  _isLoading = true;
+                });
+                widget._submitOrder(context, widget.cart.positions);
+                setState(() {
+                  _isLoading = false;
+                });
+              },
+        child: _isLoading
+            ? CircularProgressIndicator()
+            : Text('ORDER NOW',
+                style: TextStyle(
+                  color: cartIsEmpty
+                      ? Colors.grey
+                      : Theme.of(context).primaryColor,
+                )));
   }
 }

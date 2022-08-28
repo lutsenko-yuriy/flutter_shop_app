@@ -17,6 +17,12 @@ class OrderItem extends StatefulWidget {
 class _OrderItemState extends State<OrderItem> {
   var _expanded = false;
 
+  @override
+  void didChangeDependencies() {
+
+
+  }
+
   void _toggleExpand() {
     setState(() {
       _expanded = !_expanded;
