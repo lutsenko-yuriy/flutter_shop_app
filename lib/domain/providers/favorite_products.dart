@@ -17,6 +17,10 @@ class FavoriteProducts with ChangeNotifier {
       final response = await http.get(_favoritesUri);
       final responseAsObject = (json.decode(response.body) as List<dynamic>).map((e) => e.toString());
 
+      if (responseAsObject == null) {
+        return;
+      }
+
       _favoriteProductsIds =
           responseAsObject == null ? {} : responseAsObject.toSet();
       print("Favorites products are : ${_favoriteProductsIds}");
