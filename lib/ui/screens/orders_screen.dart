@@ -5,50 +5,42 @@ import '../../domain/providers/orders.dart';
 import '../widgets/order_item.dart';
 import 'orders_drawer.dart';
 
-class OrdersScreen extends StatefulWidget {
+class OrdersScreen extends StatelessWidget {
   static const routeName = '/orders';
-
-  const OrdersScreen({Key key}) : super(key: key);
-
-  @override
-  State<OrdersScreen> createState() => _OrdersScreenState();
-}
-
-class _OrdersScreenState extends State<OrdersScreen> {
-  var _isLoading = false;
-
-  @override
-  void initState() {
-    Future.delayed(Duration.zero).then((value) async {
-      setState(() {
-        _isLoading = true;
-      });
-      await context.read<Orders>().fetchAndSetOrders();
-      setState(() {
-        _isLoading = false;
-      });
-    });
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
-    var orders = context.watch<Orders>().orders;
-    var body = orders.isNotEmpty
-        ? ListView.builder(
-            itemCount: orders.length,
-            itemBuilder: (context, index) {
-              return OrderItem(orders[index]);
-            })
-        : Center(
-            child: Text('No orders yet!'),
-          );
     return Scaffold(
-      appBar: AppBar(
-        title: Text('My Orders'),
-      ),
-      drawer: OrdersDrawer(),
-      body: _isLoading ? CircularProgressIndicator() : body,
-    );
+        appBar: AppBar(
+          title: Text('My Orders'),
+        ),
+        drawer: OrdersDrawer(),
+        body: FutureBuilder(
+          future: context.read<Orders>().fetchAndSetOrders(),
+          builder: (ctx, dataSnapshot) {
+            if (dataSnapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (dataSnapshot.hasError) {
+              return Center(
+                child: Text("Failed to load orders"),
+              );
+            } else {
+              return Consumer<Orders>(builder: (ctx, orderData, child) {
+                var orders = orderData.orders;
+                return orders.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: orders.length,
+                        itemBuilder: (context, index) {
+                          return OrderItem(orders[index]);
+                        })
+                    : Center(
+                        child: Text('No orders yet!'),
+                      );
+              });
+            }
+          },
+        ));
   }
 }
