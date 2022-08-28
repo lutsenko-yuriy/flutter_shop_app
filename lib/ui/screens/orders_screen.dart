@@ -15,33 +15,40 @@ class OrdersScreen extends StatefulWidget {
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
+  var _isLoading = false;
 
   @override
   void initState() {
-    Future.delayed(Duration.zero).then((value) =>
-        context.read<Orders>().fetchAndSetOrders()
-    );
+    Future.delayed(Duration.zero).then((value) async {
+      setState(() {
+        _isLoading = true;
+      });
+      await context.read<Orders>().fetchAndSetOrders();
+      setState(() {
+        _isLoading = false;
+      });
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    var orders = context
-        .watch<Orders>()
-        .orders;
+    var orders = context.watch<Orders>().orders;
     var body = orders.isNotEmpty
         ? ListView.builder(
-        itemCount: orders.length,
-        itemBuilder: (context, index) {
-          return OrderItem(orders[index]);
-        })
-        : Center(child: Text('No orders yet!'),);
+            itemCount: orders.length,
+            itemBuilder: (context, index) {
+              return OrderItem(orders[index]);
+            })
+        : Center(
+            child: Text('No orders yet!'),
+          );
     return Scaffold(
       appBar: AppBar(
         title: Text('My Orders'),
       ),
       drawer: OrdersDrawer(),
-      body: body,
+      body: _isLoading ? CircularProgressIndicator() : body,
     );
   }
 }

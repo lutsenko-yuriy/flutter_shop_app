@@ -59,7 +59,7 @@ class Orders with ChangeNotifier {
       ));
     });
 
-    return result;
+    return result.reversed.toList();
   }
 
   Future<void> addOrder(List<CartPosition> positions, double total) async {
