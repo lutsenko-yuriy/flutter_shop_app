@@ -35,7 +35,9 @@ class MyApp extends StatelessWidget {
           ),
           ChangeNotifierProvider(
             create: (ref) {
-              return Orders(allProducts: ref.read<AllProducts>());
+              return Orders(
+                  auth: ref.read<Auth>(), allProducts: ref.read<AllProducts>()
+              );
             },
           ),
         ],
@@ -49,7 +51,8 @@ class MyApp extends StatelessWidget {
                     primarySwatch: Colors.deepOrange,
                   ),
                   fontFamily: 'Lato'),
-              home: auth.authenticated ? ProductsOverviewScreen() : AuthScreen(),
+              home:
+                  auth.authenticated ? ProductsOverviewScreen() : AuthScreen(),
               routes: {
                 ProductsOverviewScreen.routeName: (ctx) =>
                     ProductsOverviewScreen(),

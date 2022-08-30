@@ -8,16 +8,18 @@ import '../../network/http_base_url.dart';
 import '../models/cart_position.dart';
 import '../models/order.dart';
 import 'all_products.dart';
+import 'auth.dart';
 
 class Orders with ChangeNotifier {
   final AllProducts allProducts;
+  final Auth auth;
 
-  Orders({@required this.allProducts});
+  Orders({@required this.auth, @required this.allProducts});
 
   List<Order> _orders = [];
 
-  static const _baseUrl = BaseUrl.baseUrl;
-  static final _ordersUri = Uri.parse("${_baseUrl}/orders.json");
+  final _baseUrl = BaseUrl.baseUrl;
+  get _ordersUri => Uri.parse("${_baseUrl}/orders.json?auth=${auth.token}");
 
   List<Order> get orders {
     return [..._orders];
