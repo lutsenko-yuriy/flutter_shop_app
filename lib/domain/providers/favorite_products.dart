@@ -17,17 +17,18 @@ class FavoriteProducts with ChangeNotifier {
   final _baseUrl = BaseUrl.baseUrl;
 
   get _favoritesUri =>
-      Uri.parse("${_baseUrl}/favorites.json?auth=${auth.token}");
+      Uri.parse("${_baseUrl}/user/${auth.userId}/favorites.json?auth=${auth.token}");
 
   Future<void> fetchAndSetFavorites() async {
     try {
       final response = await http.get(_favoritesUri);
-      final responseAsObject = (json.decode(response.body) as List<dynamic>)
-          .map((e) => e.toString());
 
-      if (responseAsObject == null) {
+      if (response.body == null || response.body == "null") {
         return;
       }
+
+      final responseAsObject = (json.decode(response.body) as List<dynamic>)
+          .map((e) => e.toString());
 
       _favoriteProductsIds =
           responseAsObject == null ? {} : responseAsObject.toSet();

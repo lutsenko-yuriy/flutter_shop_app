@@ -62,4 +62,6 @@ class Auth with ChangeNotifier {
   String get token {
     return authenticated ? _token : null;
   }
+
+  String get userId => _userId;
 }
