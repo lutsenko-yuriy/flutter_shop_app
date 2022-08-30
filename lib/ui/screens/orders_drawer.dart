@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/ui/screens/orders_screen.dart';
 import 'package:flutter_complete_guide/ui/screens/products_overview_screen.dart';
 import 'package:flutter_complete_guide/ui/screens/user_products_screen.dart';
+import 'package:provider/provider.dart';
+
+import '../../domain/providers/auth.dart';
 
 class OrdersDrawer extends StatelessWidget {
   const OrdersDrawer({Key key}) : super(key: key);
@@ -55,6 +58,13 @@ class OrdersDrawer extends StatelessWidget {
               leading: Icon(Icons.shopping_bag),
               title: Text('My Products'),
               onTap: () => _openUserProducts(context),
+            ),
+            Divider(),
+            ListTile(
+              style: ListTileStyle.drawer,
+              leading: Icon(Icons.logout),
+              title: Text('Log out'),
+              onTap: () => context.read<Auth>().signout(),
             ),
             Divider()
           ],

@@ -19,7 +19,7 @@ class Orders with ChangeNotifier {
   List<Order> _orders = [];
 
   final _baseUrl = BaseUrl.baseUrl;
-  get _ordersUri => Uri.parse("${_baseUrl}/orders.json?auth=${auth.token}");
+  get _ordersUri => Uri.parse("${_baseUrl}/user/${auth.userId}/orders.json?auth=${auth.token}");
 
   List<Order> get orders {
     return [..._orders];

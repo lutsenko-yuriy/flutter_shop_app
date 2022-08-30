@@ -23,6 +23,14 @@ class Auth with ChangeNotifier {
     await _authenticate(url, email, password);
   }
 
+  Future<void> signout() async {
+    _token = null;
+    _expireDate = null;
+    _userId = null;
+
+    notifyListeners();
+  }
+
   Future<void> _authenticate(Uri url, String email, String password) async {
     try {
       var response = await http.post(url,
