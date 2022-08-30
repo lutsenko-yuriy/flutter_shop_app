@@ -33,14 +33,13 @@ class UserProductsScreen extends StatelessWidget {
 
   Future<void> _refreshProducts(BuildContext context) async {
     await Future.wait([
-      context.read<AllProducts>().fetchAndSetProducts(),
+      context.read<AllProducts>().fetchAndSetProducts(true),
       context.read<FavoriteProducts>().fetchAndSetFavorites()
     ]);
   }
 
   @override
   Widget build(BuildContext context) {
-    final products = context.watch<AllProducts>().items;
     return Scaffold(
       appBar: AppBar(
         title: Text('My Products'),
@@ -51,25 +50,35 @@ class UserProductsScreen extends StatelessWidget {
         ],
       ),
       drawer: OrdersDrawer(),
-      body: RefreshIndicator(
-        onRefresh: () => _refreshProducts(context),
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: ListView.builder(
-              itemCount: products.length,
-              itemBuilder: (_, index) => Column(
-                    children: [
-                      UserProductItem(
-                        products[index],
-                        onEditingRequested: (product) =>
-                            _onEditingRequested(context, product),
-                        onDeleteRequested: (product) =>
-                            _onDeleteRequested(context, product),
+      body: FutureBuilder(
+        future: _refreshProducts(context),
+        builder: (context, snapshot) =>
+            snapshot.connectionState == ConnectionState.waiting
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : RefreshIndicator(
+                    onRefresh: () => _refreshProducts(context),
+                    child: Consumer<AllProducts>(
+                      builder: (context, productsData, _) => Padding(
+                        padding: EdgeInsets.all(8),
+                        child: ListView.builder(
+                            itemCount: productsData.items.length,
+                            itemBuilder: (_, index) => Column(
+                                  children: [
+                                    UserProductItem(
+                                      productsData.items[index],
+                                      onEditingRequested: (product) =>
+                                          _onEditingRequested(context, product),
+                                      onDeleteRequested: (product) =>
+                                          _onDeleteRequested(context, product),
+                                    ),
+                                    Divider()
+                                  ],
+                                )),
                       ),
-                      Divider()
-                    ],
-                  )),
-        ),
+                    ),
+                  ),
       ),
     );
   }

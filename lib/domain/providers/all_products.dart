@@ -9,15 +9,18 @@ import '../models/product.dart';
 import 'auth.dart';
 
 class AllProducts with ChangeNotifier {
-
   final Auth auth;
+
   AllProducts({@required this.auth});
 
   final _baseUrl = BaseUrl.baseUrl;
-  get _productsUri => Uri.parse("${_baseUrl}/products.json?auth=${auth.token}");
+
+  get _baseProductUrl => "${_baseUrl}/products.json?auth=${auth.token}";
+  get _userSpecificArguments => "&orderBy=\"creatorId\"&equalTo=\"${auth.userId}\"";
 
   Uri _buildUpdateProductUri(String productId) {
-    return Uri.parse("${_baseUrl}/products/${productId}.json?auth=${auth.token}");
+    return Uri.parse(
+        "${_baseUrl}/products/${productId}.json?auth=${auth.token}");
   }
 
   List<Product> _items = [];
@@ -26,9 +29,11 @@ class AllProducts with ChangeNotifier {
     return [..._items];
   }
 
-  Future<void> fetchAndSetProducts() async {
+  Future<void> fetchAndSetProducts([bool userSpecific = false]) async {
     try {
-      final response = await http.get(_productsUri);
+      final response = await http.get(
+        Uri.parse(_baseProductUrl + (userSpecific ? _userSpecificArguments : ""))
+      );
       final responseAsObject =
           json.decode(response.body) as Map<String, dynamic>;
 
@@ -65,12 +70,13 @@ class AllProducts with ChangeNotifier {
       throw Exception("Attempted to add a new product with the existing ID");
     }
 
-    return http.post(_productsUri,
+    return http.post(Uri.parse(_baseProductUrl),
         body: json.encode({
           'title': product.title,
           'description': product.description,
           'price': product.price,
           'imageUrl': product.imageUrl,
+          'creatorId': auth.userId
         }));
   }
 
