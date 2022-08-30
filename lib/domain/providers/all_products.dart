@@ -6,13 +6,18 @@ import 'package:http/http.dart' as http;
 import '../../network/http_base_url.dart';
 import '../../network/http_exception.dart';
 import '../models/product.dart';
+import 'auth.dart';
 
 class AllProducts with ChangeNotifier {
-  static const _baseUrl = BaseUrl.baseUrl;
-  static final _productsUri = Uri.parse("${_baseUrl}/products.json");
 
-  static Uri _buildUpdateProductUri(String productId) {
-    return Uri.parse("${_baseUrl}/products/${productId}.json");
+  final Auth auth;
+  AllProducts({@required this.auth});
+
+  final _baseUrl = BaseUrl.baseUrl;
+  get _productsUri => Uri.parse("${_baseUrl}/products.json?auth=${auth.token}");
+
+  Uri _buildUpdateProductUri(String productId) {
+    return Uri.parse("${_baseUrl}/products/${productId}.json?auth=${auth.token}");
   }
 
   List<Product> _items = [];

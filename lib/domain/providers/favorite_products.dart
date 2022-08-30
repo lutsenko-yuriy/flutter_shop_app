@@ -5,17 +5,25 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../network/http_base_url.dart';
+import 'auth.dart';
 
 class FavoriteProducts with ChangeNotifier {
+  final Auth auth;
+
+  FavoriteProducts({@required this.auth});
+
   Set<String> _favoriteProductsIds = {};
 
-  static const _baseUrl = BaseUrl.baseUrl;
-  static final _favoritesUri = Uri.parse("${_baseUrl}/favorites.json");
+  final _baseUrl = BaseUrl.baseUrl;
+
+  get _favoritesUri =>
+      Uri.parse("${_baseUrl}/favorites.json?auth=${auth.token}");
 
   Future<void> fetchAndSetFavorites() async {
     try {
       final response = await http.get(_favoritesUri);
-      final responseAsObject = (json.decode(response.body) as List<dynamic>).map((e) => e.toString());
+      final responseAsObject = (json.decode(response.body) as List<dynamic>)
+          .map((e) => e.toString());
 
       if (responseAsObject == null) {
         return;
@@ -50,7 +58,8 @@ class FavoriteProducts with ChangeNotifier {
     notifyListeners();
 
     try {
-      await http.put(_favoritesUri, body: json.encode(_favoriteProductsIds.toList()));
+      await http.put(_favoritesUri,
+          body: json.encode(_favoriteProductsIds.toList()));
     } catch (e) {
       _favoriteProductsIds.remove(productId);
       notifyListeners();
@@ -63,7 +72,8 @@ class FavoriteProducts with ChangeNotifier {
     notifyListeners();
 
     try {
-      await http.put(_favoritesUri, body: json.encode(_favoriteProductsIds.toList()));
+      await http.put(_favoritesUri,
+          body: json.encode(_favoriteProductsIds.toList()));
     } catch (e) {
       _favoriteProductsIds.add(productId);
       notifyListeners();

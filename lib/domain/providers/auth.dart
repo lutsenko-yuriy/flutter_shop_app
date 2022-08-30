@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/network/base_api_key.dart';
 import 'package:http/http.dart' as http;
@@ -20,8 +19,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<void> signin(String email, String password) async {
-    final url = Uri.parse(
-        _urlTemplate + "signInWithPassword" + _urlParams);
+    final url = Uri.parse(_urlTemplate + "signInWithPassword" + _urlParams);
     await _authenticate(url, email, password);
   }
 
@@ -43,12 +41,25 @@ class Auth with ChangeNotifier {
       }
 
       _token = responseBody["idToken"];
-      _expireDate = DateTime.now()..add(Duration(seconds: responseBody["expiresIn"]));
+      _expireDate = DateTime.now()
+        .add(Duration(seconds: int.parse(responseBody["expiresIn"])));
       _userId = responseBody['localId'];
+
+      notifyListeners();
     } catch (e) {
       print(e);
       throw e;
     }
   }
 
+  bool get authenticated {
+    return _token != null &&
+        _userId != null &&
+        _expireDate != null &&
+        _expireDate.isAfter(DateTime.now());
+  }
+
+  String get token {
+    return authenticated ? _token : null;
+  }
 }

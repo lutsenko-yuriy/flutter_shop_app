@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/domain/providers/auth.dart';
+import 'package:flutter_complete_guide/ui/screens/products_overview_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../network/http_exception.dart';
@@ -14,9 +15,7 @@ class AuthScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final deviceSize = MediaQuery
-        .of(context)
-        .size;
+    final deviceSize = MediaQuery.of(context).size;
     // final transformConfig = Matrix4.rotationZ(-8 * pi / 180);
     // transformConfig.translate(-10.0);
     return Scaffold(
@@ -48,7 +47,7 @@ class AuthScreen extends StatelessWidget {
                     child: Container(
                       margin: EdgeInsets.only(bottom: 20.0),
                       padding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 94.0),
+                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 94.0),
                       transform: Matrix4.rotationZ(-8 * pi / 180)
                         ..translate(-10.0),
                       decoration: BoxDecoration(
@@ -65,8 +64,7 @@ class AuthScreen extends StatelessWidget {
                       child: Text(
                         'MyShop',
                         style: TextStyle(
-                          color: Theme
-                              .of(context)
+                          color: Theme.of(context)
                               .accentTextTheme
                               .titleSmall
                               .color,
@@ -131,6 +129,9 @@ class _AuthCardState extends State<AuthCard> {
             .read<Auth>()
             .signup(_authData['email'], _authData['password']);
       }
+
+      Navigator.of(context)
+          .pushReplacementNamed(ProductsOverviewScreen.routeName);
     } on HttpException catch (e) {
       print(e);
       var message = 'Authentication failed.';
@@ -158,17 +159,21 @@ class _AuthCardState extends State<AuthCard> {
   }
 
   void _showErrorDialog(String errorMessage) {
-    showDialog(context: context, builder: (context) {
-      return AlertDialog(
-        title: Text("Could not authenticate"),
-        content: Text(errorMessage),
-        actions: [
-          TextButton(onPressed: () {
-            Navigator.of(context).pop();
-          }, child: Text("Ok"))
-        ],
-      );
-    });
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Could not authenticate"),
+            content: Text(errorMessage),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("Ok"))
+            ],
+          );
+        });
   }
 
   void _switchAuthMode() {
@@ -185,9 +190,7 @@ class _AuthCardState extends State<AuthCard> {
 
   @override
   Widget build(BuildContext context) {
-    final deviceSize = MediaQuery
-        .of(context)
-        .size;
+    final deviceSize = MediaQuery.of(context).size;
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
@@ -196,7 +199,7 @@ class _AuthCardState extends State<AuthCard> {
       child: Container(
         height: _authMode == AuthMode.Signup ? 320 : 260,
         constraints:
-        BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 320 : 260),
+            BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 320 : 260),
         width: deviceSize.width * 0.75,
         padding: EdgeInsets.all(16.0),
         child: Form(
@@ -237,10 +240,10 @@ class _AuthCardState extends State<AuthCard> {
                     obscureText: true,
                     validator: _authMode == AuthMode.Signup
                         ? (value) {
-                      if (value != _passwordController.text) {
-                        return 'Passwords do not match!';
-                      }
-                    }
+                            if (value != _passwordController.text) {
+                              return 'Passwords do not match!';
+                            }
+                          }
                         : null,
                   ),
                 SizedBox(
@@ -251,33 +254,23 @@ class _AuthCardState extends State<AuthCard> {
                 else
                   RaisedButton(
                     child:
-                    Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
+                        Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
                     onPressed: _submit,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                     padding:
-                    EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
-                    color: Theme
-                        .of(context)
-                        .primaryColor,
-                    textColor: Theme
-                        .of(context)
-                        .primaryTextTheme
-                        .button
-                        .color,
+                        EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
+                    color: Theme.of(context).primaryColor,
+                    textColor: Theme.of(context).primaryTextTheme.button.color,
                   ),
                 FlatButton(
                   child: Text(
-                      '${_authMode == AuthMode.Login
-                          ? 'SIGNUP'
-                          : 'LOGIN'} INSTEAD'),
+                      '${_authMode == AuthMode.Login ? 'SIGNUP' : 'LOGIN'} INSTEAD'),
                   onPressed: _switchAuthMode,
                   padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 4),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  textColor: Theme
-                      .of(context)
-                      .primaryColor,
+                  textColor: Theme.of(context).primaryColor,
                 ),
               ],
             ),
