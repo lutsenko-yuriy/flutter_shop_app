@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/network/base_api_key.dart';
 import 'package:http/http.dart' as http;
@@ -6,9 +8,10 @@ import 'dart:convert';
 import '../../network/http_exception.dart';
 
 class Auth with ChangeNotifier {
-  String _token;
-  DateTime _expireDate;
+  String _token;  DateTime _expireDate;
   String _userId;
+
+  Timer _authTimer;
 
   String _urlTemplate = "https://identitytoolkit.googleapis.com/v1/accounts:";
   String _urlParams = "?key=${BaseApiKey.apiKey}";
@@ -27,6 +30,11 @@ class Auth with ChangeNotifier {
     _token = null;
     _expireDate = null;
     _userId = null;
+
+    if (_authTimer != null && !_authTimer.isActive) {
+      _authTimer.cancel();
+      _authTimer = null;
+    }
 
     notifyListeners();
   }
@@ -49,15 +57,24 @@ class Auth with ChangeNotifier {
       }
 
       _token = responseBody["idToken"];
-      _expireDate = DateTime.now()
-        .add(Duration(seconds: int.parse(responseBody["expiresIn"])));
       _userId = responseBody['localId'];
+      var duration = Duration(seconds: int.parse(responseBody["expiresIn"]));
+      _expireDate = DateTime.now().add(duration);
 
+      _autoLogout(duration);
       notifyListeners();
     } catch (e) {
       print(e);
       throw e;
     }
+  }
+
+  void _autoLogout(Duration duration) {
+    if (_authTimer != null && !_authTimer.isActive) {
+      _authTimer.cancel();
+    }
+
+    _authTimer = Timer(duration, signout);
   }
 
   bool get authenticated {
