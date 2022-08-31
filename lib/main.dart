@@ -51,9 +51,8 @@ class MyApp extends StatelessWidget {
                     primarySwatch: Colors.deepOrange,
                   ),
                   fontFamily: 'Lato'),
-              home:
-                  auth.authenticated ? ProductsOverviewScreen() : AuthScreen(),
               routes: {
+                '/': (ctx) => auth.authenticated ? ProductsOverviewScreen() : AuthScreen(),
                 ProductsOverviewScreen.routeName: (ctx) => ProductsOverviewScreen(),
                 ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
                 CartScreen.routeName: (ctx) => CartScreen(),

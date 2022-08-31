@@ -64,7 +64,10 @@ class OrdersDrawer extends StatelessWidget {
               style: ListTileStyle.drawer,
               leading: Icon(Icons.logout),
               title: Text('Log out'),
-              onTap: () => context.read<Auth>().signout(),
+              onTap: () {
+                context.read<Auth>().signout();
+                Navigator.of(context).pushReplacementNamed("/");
+              },
             ),
             Divider()
           ],
