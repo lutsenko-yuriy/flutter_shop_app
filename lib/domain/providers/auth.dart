@@ -36,6 +36,8 @@ class Auth with ChangeNotifier {
       _authTimer = null;
     }
 
+    print("Logged out");
+
     notifyListeners();
   }
 

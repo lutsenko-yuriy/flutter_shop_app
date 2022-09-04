@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/domain/providers/auth.dart';
-import 'package:flutter_complete_guide/ui/screens/products_overview_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../network/http_exception.dart';
@@ -129,9 +128,6 @@ class _AuthCardState extends State<AuthCard> {
             .read<Auth>()
             .signup(_authData['email'], _authData['password']);
       }
-
-      Navigator.of(context)
-          .pushReplacementNamed(ProductsOverviewScreen.routeName);
     } on HttpException catch (e) {
       print(e);
       var message = 'Authentication failed.';

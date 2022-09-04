@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
           ),
         ],
         child: Consumer<Auth>(
-          builder: (context, auth, child) {
+          builder: (context, auth, _) {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               title: 'MyShop',
@@ -51,8 +51,8 @@ class MyApp extends StatelessWidget {
                     primarySwatch: Colors.deepOrange,
                   ),
                   fontFamily: 'Lato'),
+              home: !auth.authenticated ? AuthScreen() : ProductsOverviewScreen(),
               routes: {
-                '/': (ctx) => auth.authenticated ? ProductsOverviewScreen() : AuthScreen(),
                 ProductsOverviewScreen.routeName: (ctx) => ProductsOverviewScreen(),
                 ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
                 CartScreen.routeName: (ctx) => CartScreen(),
