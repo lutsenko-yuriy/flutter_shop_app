@@ -14,7 +14,9 @@ class AuthScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
+    final deviceSize = MediaQuery
+        .of(context)
+        .size;
     // final transformConfig = Matrix4.rotationZ(-8 * pi / 180);
     // transformConfig.translate(-10.0);
     return Scaffold(
@@ -46,7 +48,7 @@ class AuthScreen extends StatelessWidget {
                     child: Container(
                       margin: EdgeInsets.only(bottom: 20.0),
                       padding:
-                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 94.0),
+                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 94.0),
                       transform: Matrix4.rotationZ(-8 * pi / 180)
                         ..translate(-10.0),
                       decoration: BoxDecoration(
@@ -63,7 +65,8 @@ class AuthScreen extends StatelessWidget {
                       child: Text(
                         'MyShop',
                         style: TextStyle(
-                          color: Theme.of(context)
+                          color: Theme
+                              .of(context)
                               .accentTextTheme
                               .titleSmall
                               .color,
@@ -107,6 +110,18 @@ class _AuthCardState extends State<AuthCard>
   };
   var _isLoading = false;
   final _passwordController = TextEditingController();
+
+  AnimationController _controller;
+  Animation<double> _opacityAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _opacityAnimation = Tween(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+  }
 
   void _submit() async {
     if (!_formKey.currentState.validate()) {
@@ -178,16 +193,20 @@ class _AuthCardState extends State<AuthCard>
       setState(() {
         _authMode = AuthMode.Signup;
       });
+      _controller.forward();
     } else {
       setState(() {
         _authMode = AuthMode.Login;
       });
+      _controller.reverse();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
+    final deviceSize = MediaQuery
+        .of(context)
+        .size;
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
@@ -196,7 +215,7 @@ class _AuthCardState extends State<AuthCard>
       child: AnimatedContainer(
         height: _authMode == AuthMode.Signup ? 320 : 260,
         constraints:
-            BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 320 : 260),
+        BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 320 : 260),
         width: deviceSize.width * 0.75,
         padding: EdgeInsets.all(16.0),
         duration: Duration(milliseconds: 300),
@@ -233,17 +252,21 @@ class _AuthCardState extends State<AuthCard>
                   },
                 ),
                 if (_authMode == AuthMode.Signup)
-                  TextFormField(
-                    enabled: _authMode == AuthMode.Signup,
-                    decoration: InputDecoration(labelText: 'Confirm Password'),
-                    obscureText: true,
-                    validator: _authMode == AuthMode.Signup
-                        ? (value) {
-                            if (value != _passwordController.text) {
-                              return 'Passwords do not match!';
-                            }
-                          }
-                        : null,
+                  FadeTransition(
+                    opacity: _opacityAnimation,
+                    child: TextFormField(
+                      enabled: _authMode == AuthMode.Signup,
+                      decoration: InputDecoration(
+                          labelText: 'Confirm Password'),
+                      obscureText: true,
+                      validator: _authMode == AuthMode.Signup
+                          ? (value) {
+                        if (value != _passwordController.text) {
+                          return 'Passwords do not match!';
+                        }
+                      }
+                          : null,
+                    ),
                   ),
                 SizedBox(
                   height: 20,
@@ -253,23 +276,33 @@ class _AuthCardState extends State<AuthCard>
                 else
                   RaisedButton(
                     child:
-                        Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
+                    Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
                     onPressed: _submit,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                     padding:
-                        EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
-                    color: Theme.of(context).primaryColor,
-                    textColor: Theme.of(context).primaryTextTheme.button.color,
+                    EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
+                    color: Theme
+                        .of(context)
+                        .primaryColor,
+                    textColor: Theme
+                        .of(context)
+                        .primaryTextTheme
+                        .button
+                        .color,
                   ),
                 FlatButton(
                   child: Text(
-                      '${_authMode == AuthMode.Login ? 'SIGNUP' : 'LOGIN'} INSTEAD'),
+                      '${_authMode == AuthMode.Login
+                          ? 'SIGNUP'
+                          : 'LOGIN'} INSTEAD'),
                   onPressed: _switchAuthMode,
                   padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 4),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  textColor: Theme.of(context).primaryColor,
+                  textColor: Theme
+                      .of(context)
+                      .primaryColor,
                 ),
               ],
             ),
