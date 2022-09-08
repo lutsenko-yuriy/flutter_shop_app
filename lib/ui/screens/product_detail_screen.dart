@@ -33,57 +33,71 @@ class ProductDetailScreen extends StatelessWidget {
         context.watch<ShoppingCart>().getProductCountById(productId);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(product.title),
-      ),
-      body: SingleChildScrollView(
-        child: Column(children: [
-          SizedBox(
-            height: 300,
-            width: double.infinity,
-            child: Image.network(product.imageUrl, fit: BoxFit.cover),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            '€${product.price}',
-            style: TextStyle(color: Colors.grey, fontSize: 20),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            width: double.infinity,
-            child: Text(
-              product.description,
-              textAlign: TextAlign.center,
-              softWrap: true,
+      // appBar: AppBar(
+      //   title: Text(product.title),
+      // ),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 300,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(product.title),
+              background: SizedBox(
+                height: 300,
+                width: double.infinity,
+                child: Hero(
+                    tag: productId,
+                    child: Image.network(product.imageUrl, fit: BoxFit.cover)),
+              ),
             ),
           ),
-           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              IconButton(
-                icon: Icon(
-                  favorite ? Icons.favorite : Icons.favorite_border,
-                  color: favorite ? Colors.red : Colors.grey,
-                ),
-                onPressed: () => _toggleFavorite(context, productId),
+          SliverList(
+            delegate: SliverChildListDelegate([
+              SizedBox(
+                height: 10,
               ),
-              IconButton(
-                icon: Icon(
-                  countInCart > 0
-                      ? Icons.shopping_cart
-                      : Icons.add_shopping_cart,
-                  color: countInCart > 0 ? Colors.amber : Colors.grey,
+              Text(
+                '€${product.price}',
+                style: TextStyle(color: Colors.grey, fontSize: 20),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                width: double.infinity,
+                child: Text(
+                  product.description,
+                  textAlign: TextAlign.center,
+                  softWrap: true,
                 ),
-                onPressed: () => _addToCart(context, product),
-              )
-            ],
-          )
-        ]),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      favorite ? Icons.favorite : Icons.favorite_border,
+                      color: favorite ? Colors.red : Colors.grey,
+                    ),
+                    onPressed: () => _toggleFavorite(context, productId),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      countInCart > 0
+                          ? Icons.shopping_cart
+                          : Icons.add_shopping_cart,
+                      color: countInCart > 0 ? Colors.amber : Colors.grey,
+                    ),
+                    onPressed: () => _addToCart(context, product),
+                  )
+                ],
+              ),
+            ]),
+          ),
+        ],
       ),
     );
   }
