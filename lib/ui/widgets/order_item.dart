@@ -17,12 +17,6 @@ class OrderItem extends StatefulWidget {
 class _OrderItemState extends State<OrderItem> {
   var _expanded = false;
 
-  @override
-  void didChangeDependencies() {
-
-
-  }
-
   void _toggleExpand() {
     setState(() {
       _expanded = !_expanded;
@@ -36,23 +30,33 @@ class _OrderItemState extends State<OrderItem> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-        margin: EdgeInsets.all(10),
-        child: Column(
-          children: [
-            ListTile(
-              title: Text('€${widget._order.totalPrice}'),
-              subtitle: Text(DateFormat('dd MMMM yyyy HH:mm')
-                  .format(widget._order.orderTime)),
-              trailing: IconButton(
-                icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-                onPressed: _toggleExpand,
+    var duration = Duration(milliseconds: 300);
+    return AnimatedContainer(
+      curve: Curves.easeIn,
+      duration: duration,
+      child: Card(
+          margin: EdgeInsets.all(10),
+          child: Column(
+            children: [
+              ListTile(
+                title: Text('€${widget._order.totalPrice}'),
+                subtitle: Text(DateFormat('dd MMMM yyyy HH:mm')
+                    .format(widget._order.orderTime)),
+                trailing: IconButton(
+                  icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
+                  onPressed: _toggleExpand,
+                ),
               ),
-            ),
-            if (_expanded) Divider(),
-            if (_expanded)
-              Container(
-                height: 100,
+              AnimatedContainer(
+                  duration: duration,
+                  curve: Curves.easeIn,
+                  child: Divider(
+                    height: _expanded ? 1 : 0,
+                  )),
+              AnimatedContainer(
+                duration: duration,
+                curve: Curves.easeIn,
+                height: _expanded ? 100 : 0,
                 width: double.infinity,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
@@ -73,7 +77,8 @@ class _OrderItemState extends State<OrderItem> {
                   }).toList(),
                 ),
               )
-          ],
-        ));
+            ],
+          )),
+    );
   }
 }

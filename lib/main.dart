@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/domain/providers/auth.dart';
 import 'package:flutter_complete_guide/domain/providers/favorite_products.dart';
 import 'package:flutter_complete_guide/domain/providers/orders.dart';
+import 'package:flutter_complete_guide/helpers/custom_transition.dart';
 import 'package:flutter_complete_guide/ui/screens/auth_screen.dart';
 import 'package:flutter_complete_guide/ui/screens/cart_screen.dart';
 import 'package:flutter_complete_guide/ui/screens/edit_product_screen.dart';
@@ -49,7 +50,14 @@ class MyApp extends StatelessWidget {
                   colorScheme: ColorScheme.fromSwatch(
                     primarySwatch: Colors.deepOrange,
                   ),
-                  fontFamily: 'Lato'),
+                  fontFamily: 'Lato',
+                pageTransitionsTheme: PageTransitionsTheme(
+                  builders: {
+                    TargetPlatform.android : CustomPageTransitionsBuilder(),
+                    TargetPlatform.iOS : CustomPageTransitionsBuilder(),
+                  }
+                )
+              ),
               home: auth.authenticated
                   ? ProductsOverviewScreen()
                   : FutureBuilder(

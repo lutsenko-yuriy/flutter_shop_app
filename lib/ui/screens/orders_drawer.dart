@@ -34,9 +34,7 @@ class OrdersDrawer extends StatelessWidget {
               color: Theme.of(context).colorScheme.secondary,
               child: Text('My Menu',
                   style: TextStyle(
-                      fontFamily: 'Anton',
-                      fontSize: 32,
-                      color: Colors.white)),
+                      fontFamily: 'Anton', fontSize: 32, color: Colors.white)),
             ),
             Divider(),
             ListTile(
