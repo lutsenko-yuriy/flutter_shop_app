@@ -22,8 +22,13 @@ class ProductItem extends StatelessWidget {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       duration: Duration(seconds: 2),
-      content: Text('${_product.title} is added to cart', textAlign: TextAlign.center,),
-      action: SnackBarAction(label: 'Undo', onPressed: () => shoppingCartData.removeProduct(_product)),
+      content: Text(
+        '${_product.title} is added to cart',
+        textAlign: TextAlign.center,
+      ),
+      action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () => shoppingCartData.removeProduct(_product)),
     ));
   }
 
@@ -44,8 +49,9 @@ class ProductItem extends StatelessWidget {
       child: GridTile(
         child: GestureDetector(
           onTap: () => _goToDetails(context),
-          child: Image.network(
-            _product.imageUrl,
+          child: FadeInImage(
+            placeholder: AssetImage('assets/images/product-placeholder.png'),
+            image: NetworkImage(_product.imageUrl),
             fit: BoxFit.cover,
           ),
         ),
